@@ -315,21 +315,20 @@ fn get_line() -> String
 fn parse_line(line: String, profile_data: &mut Vec<Profile>)
 {
     let mut ch_iter = line.chars();
-    let ch1 = ch_iter.next().unwrap();
+    let ch1 = ch_iter.next();
+    if ch1 == None {
+        println!("incorrect format");
+        return;
+    }
 
-    if ch1 == '%' {
-        let mut cmd_split = line.split_whitespace();
+    if ch1.unwrap() == '%' {
+        let mut cmd_split = line.splitn(2, " ");
         let cmd = cmd_split.next().unwrap();
         let param = cmd_split.next();
-        let over_arg = cmd_split.next();
-        if over_arg == None{
-            if param == None {
-                exec_command1(cmd, profile_data);
-            } else {
-                exec_command2(cmd, param.unwrap(), profile_data);
-            }
+        if param == None {
+            exec_command1(cmd, profile_data);
         } else {
-            println!("too many arg");
+            exec_command2(cmd, param.unwrap(), profile_data);
         }
     } else {
         new_profile(line, profile_data);
